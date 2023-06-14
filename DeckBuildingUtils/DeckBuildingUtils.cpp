@@ -114,9 +114,6 @@ This program comes with ABSOLUTELY NO WARRANTY
             TotalCmc -= (cmc * amount);
             nonLands -= amount;
             cmcs[cmc] -= amount;
-            /*Console::MoveCursorDown(50); 
-            Console::Print(std::format("removing {} cards from slot {} cmcs {}\r", amount, cmc, cmcs[cmc]));
-            Console::MoveCursorUp(50);*/
 
         }
         if (command == 'R') {

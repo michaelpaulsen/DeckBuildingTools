@@ -20,3 +20,4 @@
 *.sln
 DeckBuildingUtils/x64/Debug/_IsIncrementalBuild
 .vs/DeckBuildingUtils/v17/.suo
+*.zip
