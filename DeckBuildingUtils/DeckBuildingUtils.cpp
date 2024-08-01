@@ -2,82 +2,84 @@
 #include<string>
 #include <map>
 #include <format>
-#include "Console.hpp"
-void NoNonLands(int lands) {
-    Console::ChangeForeGroundColor(RED, true);
-    Console::AddTextModifiers(FBLNK);
-    Console::Println("NO NON-LAND CARDS USE THE MENU TO ADD SOME");
-    Console::AddTextModifiers(NOBLINK);
-    Console::Println("nonland to land ratio : 0 ");
-    Console::Println(std::format("Lands : {}",lands));
-    Console::Println(std::format("Non-Lands : 0"));
-    Console::AddTextModifiers(RESET);
-}
-void AddCardPrompt(int &cmc, int &amount ) {
-    Console::Println("enter the card's Converted casting cost");
+#include "../../Skele_lib/Console/Console.hpp"
+namespace c = SKC::Console; 
+void NoNonLands(c::Console &console, int lands) {
+    console.SetFGColor(255,0,0).Blink();
+    console.Println("NO NON-LAND CARDS USE THE MENU TO ADD SOME");
 
-    Console::ClearLine();
+    console.NoBlink();
+    console.Println("nonland to land ratio : 0 ");
+    console.Println(std::format("Lands : {}",lands));
+    console.Println(std::format("Non-Lands : 0"));
+    console.Reset();
+}
+void AddCardPrompt(c::Console &console, int &cmc, int &amount ) {
+    
+    console.Println("enter the card's Converted casting cost");
     std::cin >> cmc;
-
-    Console::Println("enter the amount of that card ");
-    Console::ClearLine();
+    console.ClearLine().Up().ClearLine();
+    console.Println("enter the amount of that card ");
+    //console.ClearLine();
     std::cin >> amount;
+    console.ClearLine().Up().ClearLine();
+
 }
-void PrintActions() {
-    Console::Println("--menu--"); 
-    Console::Println("[a]dd nonland"); 
-    Console::Println("[r]emove a nonland"); 
-    Console::Println("add a [l]and"); 
-    Console::Println("remove a [L]and"); 
-    Console::Println("[R]eset the program"); 
-    Console::Println("e[x]it");
-    Console::Println("--------"); 
+void PrintActions(c::Console &c) {
+    c.Clear().Print(R"(Copyright(C) 2023 Skeleton_craft 
+This program comes with ABSOLUTELY NO WARRANTY
+)");
+    c.Println("--menu--"); 
+    c.Println("[a]dd nonland"); 
+    c.Println("[r]emove a nonland"); 
+    c.Println("add a [l]and"); 
+    c.Println("remove a [L]and"); 
+    c.Println("[R]eset the program"); 
+    c.Println("e[x]it");
+    c.Println("--------"); 
 }
-void PrintDeckStats(int lands, int nonLands, int TotalCmc) {
-    Console::Print("--Deck Stats--\nTotal Number of cards = ");
+void PrintDeckStats(c::Console &c, int lands, int nonLands, int TotalCmc) {
+    c.Clear();
+    c.Print("--Deck Stats--\nTotal Number of cards = ");
     if (lands + nonLands < 60) {
-        Console::ChangeForeGroundColor(YELLOW);
-        Console::AddTextModifiers(OLINE);
-        Console::AddTextModifiers(UNDERLINE);
+        c.SetFGColor(255,0,0).SetBGColor(255, 128, 128);
 
     }
-    Console::Println(std::format("{}", lands + nonLands));
-    Console::AddTextModifiers(RESET);
+    c.Println(std::format("{}", lands + nonLands)).Reset();
     if (nonLands > 0) {
-        Console::Print("average cmc =");
+        c.Print("average cmc =");
         double acmc = (double)(TotalCmc) / (double)(nonLands);
         if (acmc < 3.5) {
-            Console::ChangeForeGroundColor(GREEN, true);
+            c.SetFGColor(128,255,128);
         }
         if (acmc >= 3.5) {
-            Console::ChangeForeGroundColor(YELLOW);
+            c.SetFGColor(255,255,0);
         }
         if (acmc >= 4) {
-            Console::ChangeForeGroundColor(RED);
+            c.SetFGColor(255,0,0);
 
         }
-        Console::Println(std::format("{}", acmc));
-        Console::AddTextModifiers(RESET);
-        Console::Print("nonland to land ratio : ");
+        c.Println(std::format("{}", acmc));
+        c.Reset();
+        c.Print("nonland to land ratio : ");
         double nltol = (double)(nonLands) / (double)(lands);
         if (nltol >= 3 || nltol < 1) {
-            Console::ChangeForeGroundColor(RED, true);
-
+            c.SetFGColor(128,255,128);
         }
         if (nltol < 2) {
-            Console::ChangeForeGroundColor(YELLOW);
+            c.SetFGColor(128,128,0);
         }
         if (nltol > 2 && nltol < 3) {
-            Console::ChangeForeGroundColor(GREEN);
+            c.SetFGColor(0,255,0);
 
         }
-        Console::Println(std::format("{}", nltol)); 
-        Console::AddTextModifiers(RESET);
-        Console::Println(std::format("Lands : {}", lands)); 
-        Console::Println(std::format("non-Lands : {}", nonLands)); 
+        c.Println(std::format("{}", nltol)); 
+        c.Reset();
+        c.Println(std::format("Lands : {}", lands)); 
+        c.Println(std::format("non-Lands : {}", nonLands)); 
     }
     else {
-        NoNonLands(lands);
+        NoNonLands(c, lands);
     }
     
 
@@ -86,23 +88,22 @@ constexpr int MAX_ROWS = 30;
 
 int main()
 {
-    std::cout << R"(Copyright(C) 2023 Skeleton_craft 
-This program comes with ABSOLUTELY NO WARRANTY
-        )"; 
+    
+    SKC::Console::Console c{}; 
     int lands = 24, nonLands = 0, TotalCmc = 0;
     char command = 0;
     std::map<unsigned, unsigned> cmcs = {};
     for (int x = 1; x <= 10; ++x) cmcs[x] = 0; 
     while (command != 'x') {
-        PrintDeckStats(lands, nonLands, TotalCmc);
-        PrintActions();
+        PrintDeckStats(c, lands, nonLands, TotalCmc);
+        PrintActions(c);
        
-        Console::ClearLine();
+        c.ClearLine();
         std::cin >> command;
        if (command == 'a') {
             int cmc = 0;
             int amount = 0;
-            AddCardPrompt(cmc, amount); 
+            AddCardPrompt(c, cmc, amount); 
             TotalCmc += (cmc * amount);
             nonLands += amount; 
             cmcs[cmc] += amount; 
@@ -110,7 +111,7 @@ This program comes with ABSOLUTELY NO WARRANTY
         if (command == 'r') {
             int cmc = 0;
             int amount = 0;
-            AddCardPrompt(cmc, amount); 
+            AddCardPrompt(c, cmc, amount); 
             TotalCmc -= (cmc * amount);
             nonLands -= amount;
             cmcs[cmc] -= amount;
@@ -122,42 +123,42 @@ This program comes with ABSOLUTELY NO WARRANTY
             nonLands = 0;
             cmcs = {}; 
             for (int x = 1; x <= 10; ++x) cmcs[x] = 0;
-            Console::MoveCursorDown(4); 
+            c.Down(4); 
             
         }
         if (command == 'l') {
             ++lands;
-            Console::MoveCursorDown(4);
+            c.Down(4);
         }
         if (command == 'L') {
             --lands; 
-            Console::MoveCursorDown(4);
+            c.Down(4);
         }
         std::cout << " "; 
         for (auto const& [key, val] : cmcs)
         {
-            Console::MoveCursorDown(MAX_ROWS + 2);
-            Console::Print(std::format("{}", key));
-            Console::MoveCursorBack(1);
-            Console::MoveCursorUp();
-            Console::Print("-");
-            Console::MoveCursorUp();
+            c.Down(MAX_ROWS + 2);
+            c.Print(std::format("{}", key));
+            c.Left(1);
+            c.Up();
+            c.Print("-");
+            c.Up();
             for (int x = 1; x <= MAX_ROWS; ++x) {
                 if(x <= val){ 
-                    Console::MoveCursorBack(1);
-                    Console::Print("#");
+                    c.Left(1);
+                    c.Print("#");
                 }
                 else {
-                    Console::MoveCursorBack(1);
-                    Console::Print(" "); 
+                    c.Left(1);
+                    c.Print(" "); 
                 }
-                    Console::MoveCursorUp();
+                    c.Up();
             }
-            //Console::MoveCursorUp(MAX_ROWS - val);
-            Console::MoveCursorForward(2);
+            //c.Up(MAX_ROWS - val);
+            c.Right(2);
         }
-        //Console::ClearScreen();
-        Console::Return(0, 0); 
+        //c.ClearScreen();
+        c.Move(1, 1); 
 
         
     }
