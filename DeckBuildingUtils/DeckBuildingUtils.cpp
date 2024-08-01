@@ -22,11 +22,12 @@ void AddCardPrompt(c::Console &console, int &cmc, int &amount ) {
     console.Println("enter the amount of that card ");
     //console.ClearLine();
     std::cin >> amount;
-    console.ClearLine().Up().ClearLine();
+    console.Up().ClearLine().Up().ClearLine();
+    console.Up().ClearLine().Up().ClearLine();
 
 }
 void PrintActions(c::Console &c) {
-    c.Clear().Print(R"(Copyright(C) 2023 Skeleton_craft 
+    c.Print(R"(Copyright(C) 2023 Skeleton_craft 
 This program comes with ABSOLUTELY NO WARRANTY
 )");
     c.Println("--menu--"); 
@@ -39,7 +40,6 @@ This program comes with ABSOLUTELY NO WARRANTY
     c.Println("--------"); 
 }
 void PrintDeckStats(c::Console &c, int lands, int nonLands, int TotalCmc) {
-    c.Clear();
     c.Print("--Deck Stats--\nTotal Number of cards = ");
     if (lands + nonLands < 60) {
         c.SetFGColor(255,0,0).SetBGColor(255, 128, 128);
@@ -123,18 +123,17 @@ int main()
             nonLands = 0;
             cmcs = {}; 
             for (int x = 1; x <= 10; ++x) cmcs[x] = 0;
-            c.Down(4); 
-            
         }
         if (command == 'l') {
             ++lands;
-            c.Down(4);
         }
         if (command == 'L') {
             --lands; 
-            c.Down(4);
         }
         std::cout << " "; 
+        std::cin.ignore();
+        c.Clear();
+
         for (auto const& [key, val] : cmcs)
         {
             c.Down(MAX_ROWS + 2);
@@ -159,7 +158,10 @@ int main()
         }
         //c.ClearScreen();
         c.Move(1, 1); 
+        PrintDeckStats(c, lands, nonLands, TotalCmc);
 
+        std::cin.ignore();
+        c.Clear();
         
     }
 }
