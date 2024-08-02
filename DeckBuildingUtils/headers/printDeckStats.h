@@ -7,7 +7,6 @@ namespace SKC {
         c.Print("--Deck Stats--\nTotal Number of cards = ");
         if (lands + nonLands < 60) {
             c.SetFGColor(255, 0, 0).SetBGColor(255, 128, 128);
-
         }
         c.Println( lands + nonLands).Reset();
         if (nonLands == 0) {
@@ -26,8 +25,7 @@ namespace SKC {
             c.SetFGColor(255, 0, 0);
 
         }
-        c.Println(acmc, "( ", (int)acmc + 1, " target )");
-        c.Reset();
+        c.Println(acmc, "( ", (int)acmc + 1, " target )").Reset();
         c.Print("nonland to land ratio : ");
         double nltol = (double)(nonLands) / (double)(lands);
         if (nltol >= 3 || nltol < 1) {
@@ -40,8 +38,7 @@ namespace SKC {
             c.SetFGColor(0, 255, 0);
 
         }
-        c.Println(nltol);
-        c.Reset();
+        c.Println(nltol).Reset();
         c.Println("Lands : ", lands);
         c.Println("non-Lands : {}", nonLands);
     }
