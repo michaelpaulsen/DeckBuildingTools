@@ -18,7 +18,6 @@ void AddCardPrompt(c::Console &console, int &cmc, int &amount ) {
     
     console.Println("enter the card's Converted casting cost");
     std::cin >> cmc;
-    console.ClearLine().Up().ClearLine();
     console.Println("enter the amount of that card ");
     //console.ClearLine();
     std::cin >> amount;
@@ -59,7 +58,7 @@ void PrintDeckStats(c::Console &c, int lands, int nonLands, int TotalCmc) {
             c.SetFGColor(255,0,0);
 
         }
-        c.Println(std::format("{}", acmc));
+        c.Println(acmc, "( ", (int)acmc + 1, " target )");
         c.Reset();
         c.Print("nonland to land ratio : ");
         double nltol = (double)(nonLands) / (double)(lands);
@@ -84,7 +83,7 @@ void PrintDeckStats(c::Console &c, int lands, int nonLands, int TotalCmc) {
     
 
 }
-constexpr int MAX_ROWS = 30;
+constexpr int MAX_COL = 10;
 
 int main()
 {
@@ -95,7 +94,6 @@ int main()
     std::map<unsigned, unsigned> cmcs = {};
     for (int x = 1; x <= 10; ++x) cmcs[x] = 0; 
     while (command != 'x') {
-        PrintDeckStats(c, lands, nonLands, TotalCmc);
         PrintActions(c);
        
         c.ClearLine();
@@ -134,34 +132,47 @@ int main()
         std::cin.ignore();
         c.Clear();
 
-        for (auto const& [key, val] : cmcs)
-        {
-            c.Down(MAX_ROWS + 2);
-            c.Print(std::format("{}", key));
-            c.Left(1);
-            c.Up();
-            c.Print("-");
-            c.Up();
-            for (int x = 1; x <= MAX_ROWS; ++x) {
-                if(x <= val){ 
-                    c.Left(1);
-                    c.Print("#");
-                }
-                else {
-                    c.Left(1);
-                    c.Print(" "); 
-                }
-                    c.Up();
-            }
-            //c.Up(MAX_ROWS - val);
-            c.Right(2);
+        unsigned max = 0;
+        for (auto& item : cmcs) {
+            auto [key, value] = item;
+            if (max < value) max = value;
         }
-        //c.ClearScreen();
+        for (int x = 1; x <= 10; ++x) {
+            double val = cmcs[x - 1];//((double)rand() / (double)RAND_MAX) * MAX_COL;
+            if (max > MAX_COL) {
+                val /= max;
+                val *= MAX_COL;
+            }
+            c.Move(x, MAX_COL + 11).Print(x).Up().Left().Print('-');
+            for (int y = 1; y <= 10; ++y) {
+                auto py = (MAX_COL - y) + 10;
+                double t = val - y;
+
+                if (t < 0) continue;
+                //c.Move(x, py).Print(char(219));
+
+                if (t > 1) {
+                    c.Move(x, py).Print(char(219));
+                    continue;
+
+                }
+                if (t > 0.75) {
+                    c.Move(x, py).Print('#');
+                    continue;
+
+                }
+                if (t > 0.5) {
+                    c.Move(x, py).Print(char(178));
+                    continue;
+
+                }
+                c.Move(x, py).Print(char(176));
+            }
+
+        }
         c.Move(1, 1); 
         PrintDeckStats(c, lands, nonLands, TotalCmc);
-
         std::cin.ignore();
         c.Clear();
-        
     }
 }
