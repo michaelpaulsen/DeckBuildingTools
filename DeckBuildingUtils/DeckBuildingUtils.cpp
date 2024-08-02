@@ -3,29 +3,11 @@
 #include <map>
 #include <format>
 #include "../../Skele_lib/Console/Console.hpp"
-namespace c = SKC::Console; 
-void NoNonLands(c::Console &console, int lands) {
-    console.SetFGColor(255,0,0).Blink();
-    console.Println("NO NON-LAND CARDS USE THE MENU TO ADD SOME");
+#include "./headers/actions.hpp"
+#include "./headers/printDeckStats.h"
 
-    console.NoBlink();
-    console.Println("nonland to land ratio : 0 ");
-    console.Println(std::format("Lands : {}",lands));
-    console.Println(std::format("Non-Lands : 0"));
-    console.Reset();
-}
-void AddCardPrompt(c::Console &console, int &cmc, int &amount ) {
     
-    console.Println("enter the card's Converted casting cost");
-    std::cin >> cmc;
-    console.Println("enter the amount of that card ");
-    //console.ClearLine();
-    std::cin >> amount;
-    console.Up().ClearLine().Up().ClearLine();
-    console.Up().ClearLine().Up().ClearLine();
-
-}
-void PrintActions(c::Console &c) {
+void PrintActions(SKC::Console::Console &c) {
     c.Print(R"(Copyright(C) 2023 Skeleton_craft 
 This program comes with ABSOLUTELY NO WARRANTY
 )");
@@ -38,51 +20,7 @@ This program comes with ABSOLUTELY NO WARRANTY
     c.Println("e[x]it");
     c.Println("--------"); 
 }
-void PrintDeckStats(c::Console &c, int lands, int nonLands, int TotalCmc) {
-    c.Print("--Deck Stats--\nTotal Number of cards = ");
-    if (lands + nonLands < 60) {
-        c.SetFGColor(255,0,0).SetBGColor(255, 128, 128);
 
-    }
-    c.Println(std::format("{}", lands + nonLands)).Reset();
-    if (nonLands > 0) {
-        c.Print("average cmc =");
-        double acmc = (double)(TotalCmc) / (double)(nonLands);
-        if (acmc < 3.5) {
-            c.SetFGColor(128,255,128);
-        }
-        if (acmc >= 3.5) {
-            c.SetFGColor(255,255,0);
-        }
-        if (acmc >= 4) {
-            c.SetFGColor(255,0,0);
-
-        }
-        c.Println(acmc, "( ", (int)acmc + 1, " target )");
-        c.Reset();
-        c.Print("nonland to land ratio : ");
-        double nltol = (double)(nonLands) / (double)(lands);
-        if (nltol >= 3 || nltol < 1) {
-            c.SetFGColor(128,255,128);
-        }
-        if (nltol < 2) {
-            c.SetFGColor(128,128,0);
-        }
-        if (nltol > 2 && nltol < 3) {
-            c.SetFGColor(0,255,0);
-
-        }
-        c.Println(std::format("{}", nltol)); 
-        c.Reset();
-        c.Println(std::format("Lands : {}", lands)); 
-        c.Println(std::format("non-Lands : {}", nonLands)); 
-    }
-    else {
-        NoNonLands(c, lands);
-    }
-    
-
-}
 constexpr int MAX_COL = 10;
 
 int main()
@@ -101,7 +39,7 @@ int main()
        if (command == 'a') {
             int cmc = 0;
             int amount = 0;
-            AddCardPrompt(c, cmc, amount); 
+            SKC::AddCardPrompt(c, cmc, amount);
             TotalCmc += (cmc * amount);
             nonLands += amount; 
             cmcs[cmc] += amount; 
@@ -109,7 +47,7 @@ int main()
         if (command == 'r') {
             int cmc = 0;
             int amount = 0;
-            AddCardPrompt(c, cmc, amount); 
+            SKC::AddCardPrompt(c, cmc, amount);
             TotalCmc -= (cmc * amount);
             nonLands -= amount;
             cmcs[cmc] -= amount;
@@ -134,7 +72,7 @@ int main()
 
         unsigned max = 0;
         for (auto& item : cmcs) {
-            auto [key, value] = item;
+            auto &[key, value] = item;
             if (max < value) max = value;
         }
         for (int x = 1; x <= 10; ++x) {
@@ -171,7 +109,7 @@ int main()
 
         }
         c.Move(1, 1); 
-        PrintDeckStats(c, lands, nonLands, TotalCmc);
+        SKC::PrintDeckStats(c, lands, nonLands, TotalCmc);
         std::cin.ignore();
         c.Clear();
     }
