@@ -76,7 +76,7 @@ int main()
             if (max < value) max = value;
         }
         for (int x = 1; x <= 10; ++x) {
-            double val = cmcs[x - 1];//((double)rand() / (double)RAND_MAX) * MAX_COL;
+            double val = cmcs[x];//((double)rand() / (double)RAND_MAX) * MAX_COL;
             if (max > MAX_COL) {
                 val /= max;
                 val *= MAX_COL;
