@@ -9,7 +9,7 @@ namespace SKC {
             c.SetFGColor(255, 0, 0).SetBGColor(255, 128, 128);
 
         }
-        c.Println(std::format("{}", lands + nonLands)).Reset();
+        c.Println( lands + nonLands).Reset();
         if (nonLands == 0) {
             NoNonLands(c, lands);
             return;
@@ -40,9 +40,9 @@ namespace SKC {
             c.SetFGColor(0, 255, 0);
 
         }
-        c.Println(std::format("{}", nltol));
+        c.Println(nltol);
         c.Reset();
-        c.Println(std::format("Lands : {}", lands));
-        c.Println(std::format("non-Lands : {}", nonLands));
+        c.Println("Lands : ", lands);
+        c.Println("non-Lands : {}", nonLands);
     }
 }
